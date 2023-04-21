@@ -1,179 +1,205 @@
+# Model training procedure
 
-![Banner image](https://images.aicrowd.com/uploads/ckeditor/pictures/1049/content_b8c5690e284c32f89810.jpg)
+This document will explain how to train model using this codebase. The codebase was modified many times during the competition then it is no so clean as it should be :(
 
-# **[Visual Product Recognition Challenge 2023](https://www.aicrowd.com/challenges/visual-product-recognition-challenge-2023)** - Starter Kit
-[![Discord](https://img.shields.io/discord/565639094860775436.svg)](https://discord.gg/fNRrSvZkry)
+Here I will describe 2 main points:
+1. Data preparation
+2. Model training
+3. Model preparation for submission
 
-This repository is the Visual Product Recognition Challenge 2023 **Starter kit**! It contains:
-*  **Documentation** on how to submit your models to the leaderboard
-*  **The procedure** for best practices and information on how we evaluate your agent, etc.
-*  **Starter code** for you to get started!
-
-Quick Links:
-
-* [Visual Product Recognition Challenge 2023 - Competition Page](https://www.aicrowd.com/challenges/visual-product-recognition-challenge-2023)
-* [Discussion Forum](https://www.aicrowd.com/challenges/visual-product-recognition-challenge-2023discussion)
-* [Starer-Kit](https://gitlab.aicrowd.com/aicrowd/challenges/visual-product-matching-2023/visual-product-recognition-2023-starter-kit)
-
-
-# Table of Contents
-1. [About the Visual Product Recognition Challenge](#about-the-visual-product-recognition-challenge)
-2. [Evaluation](#evaluation)
-3. [Baselines](#baselines) 
-4. [How to test and debug locally](#how-to-test-and-debug-locally)
-5. [How to submit](#how-to-submit)
-6. [Dataset](#dataset)
-7. [Setting up your codebase](#setting-up-your-codebase)
-8. [FAQs](#faqs)
-
-# About the Visual Product Recognition Challenge
-
-Enabling quick and precise search among millions of items on marketplaces is a key feature for e-commerce. The use of common text-based search engines often requires several iterations and can render unsuccessful unless exact product names are known. Image-based search provides a powerful alternative and can be particularly handy when a customer observes the desired product in real life, in movies or online media.
-
-Recent progress in computer vision now provides rich and precise descriptors for visual content. The goal of this challenge is to benchmark and advance existing computer vision methods for the task of image-based product search. Our evaluation targets a real-case scenario where we use over 40k images for 9k products from real marketplaces. Example products include sandals and sunglasses, and their successful matching requires overcoming visual variations in terms of resolution, quality, sharpness.
-
-
-## Problem Statement 
-
-In this challenge we separate product images into user and seller photos. User photos are typically snapshots of products taken with a phone camera in cluttered scenes. Such images differ substantially from seller photos that are intended to represent products on marketplaces. We provide object bounding boxes to indicate desired products on user photos and use such images and boxes as search queries. Given a search query, the goal of the algorithm is to find correct product matches in the database of seller photos.
-
-The contest is being held as part of Machines Can See Summit 2023.
-
-Your contribution to this challenge can help push pattern recognition research and develop a novel algorithm for product verification. 
-
-# Evaluation
-
-Participants' submissions will be evaluated by mAP (mean Average Precision) score for the retrieval task.
-
-$`AP@n = {1 \over GTP}\sum_k^n{P@k \times rel@k}`$
-
-where GTP refers to the total number of ground truth positives, n refers to the total number of products you are interested in, P@k refers to the precision@k and rel@k is a relevance function. The relevance function is an indicator function which equals 1 if the product at rank k is relevant and equals to 0 otherwise. K = 1000 in our case.
-
-Calculating AP for a given query, Q, with a GTP=3
-
-# Baselines
-
-**Baseline for MCS2023: Visual Product Recognition Challenge** 
-
-Check the baseline training code in the `MCS2023_baseline` directory and the inference code at `my_submission/mcs_baseline_ranker.py`
-
-**To submit the baseline** - Change the ranker class in `my_submission/user_config.py`
-
-![Visual Products](MCS2023_baseline/figures/pipeline.jpg?raw=true "Baseline pipeline")  
-
-This `MCS2023_baseline` with a baseline solution for the MCS2023: Visual Product Recognition Challenge. 
-
-In this competition, participants need to train a model to search for similar 
-products on the marketplaces based on a user's photo.
-
-The idea of the basic solution is to train a classifier of different products, 
-remove the classification layer and use embeddings to solve the retrieval problem.
-
-# How to Test and Debug Locally
-
-The best way to test your models is to run your submission locally.
-
-You can do this by simply running  `python local_evaluation.py`. **Note that your local setup and the server evalution runtime may vary.** Make sure you mention setup your runtime according to the section: [How do I specify my dependencies?](#how-do-i-specify-my-dependencies)
-
-# How to Submit
-
-You can use the submission script `source submit.sh <submission name>`
-
-More information on submissions can be found in [SUBMISSION.md](/docs/submission.md).
-
-#### A high level description of the Challenge Procedure:
-1. **Sign up** to join the competition [on the AIcrowd website](https://www.aicrowd.com/challenges/visual-product-recognition-challenge-2023).
-2. **Fork** this repo and start developing your solution.
-3. **Train** your models on publicly available dataset, and ensure `local_evaluation.py` works.
-4. **Submit** your trained models to [AIcrowd Gitlab](https://gitlab.aicrowd.com)
-for evaluation (full instructions below). The automated evaluation setup
-will evaluate the submissions against the test data to compute and report the metrics on the leaderboard
-of the competition.
-
-
-# Dataset
-
-Download the [public dataset](https://www.aicrowd.com/challenges/visual-product-recognition-challenge-2023/dataset_files)) for this competition using the link below, you'll need to accept the rules of the competition to access the data. This is intended for local validation and not sufficient for training a competent model.
-
-# Setting Up Your Codebase
-
-AIcrowd provides great flexibility in the details of your submission!  
-Find the answers to FAQs about submission structure below, followed by 
-the guide for setting up this starter kit and linking it to the AIcrowd 
-GitLab.
-
-## FAQs
-
-* How do I submit a model?
-  * More information on submissions can be found at our [submission.md](/docs/submission.md). In short, you should push you code to the AIcrowd's gitlab with a specific git tag and the evaluation will be triggered automatically.
-
-### How do I specify my dependencies?
-
-We accept submissions with custom runtimes, so you can choose your 
-favorite! The configuration files typically include `requirements.txt` 
-(pypi packages), `apt.txt` (apt packages) or even your own `Dockerfile`.
-
-You can check detailed information about this in [runtime.md](/docs/runtime.md).
-
-### What should my code structure look like?
-
-Please follow the example structure as it is in the starter kit for the code structure.
-The different files and directories have following meaning:
-
-
+# Data preparation
+## Product10k and dev-set
+In both cases there was no change in the files from this dataset. Just place them in folder like `dataset`.
+My folder structure for these datasets in following:
 ```
-.
-├── aicrowd.json                # Add any descriptions about your model and gpu flag
-├── apt.txt                     # Linux packages to be installed inside docker image
-├── requirements.txt            # Python packages to be installed
-├── local_evaluation.py         # Use this to check your model evaluation flow locally
-├── MCS2023_baseline            # Baseline for training on Products10k dataset
-└── my_submission               # Place your models and related code here
-    ├── <Your model files>      # Add any models here for easy organization
-    ├── aicrowd_wrapper.py      # Keep this file unchanged
-    └── user_config.py          # IMPORTANT: Add your model name here
+Product10K
+- train
+- train.csv
+- test
+- test_kaggletest.csv
+
+development_test_data
+- gallery
+- gallery.csv
+- queries
+- queries.csv
 ```
 
-### How can I get going with an existing baseline?
+## Amazon Review
+I decided to use this [dataset](https://cseweb.ucsd.edu/~jmcauley/datasets/amazon_v2/) as from the review dataset we can get product images and user images. Connecting both of them allow to create pairs.
+The main problem of using such dataset is that not all images from user are correct one (in sense of Visual-Search system). Like they present the detail of product (like 5x zoom) or product was damage.
 
-See [baselines section](#baselines)
+To filter out this kind of images I decided to implement following pipeline:
+- extract the embedding for each image (for both, product and user image)
+- create all possible pairs product vs user and calculate cosine similarity between them
+- take only these images that mean cosine similarity value > TH (I've chosen 0.6 and 0.5)
 
-### How can I get going with a completely new model?
+Such pipeline enabled my to create dataset of ~400k images for 0.6(`dataset/amazon_review_mean_06_full_images.csv`) and 800k for 0.5 (`dataset/amazon_review_mean_05_full_images.csv`).
 
-Train your model as you like, and when you’re ready to submit, implement the inference class and import it to `my_submission/user_config.py`. Refer to [`my_submission/README.md`](my_submission/README.md) for a detailed explanation.
-
-Once you are ready, test your implementation `python local_evaluation.py`
-
-### How do I actually make a submission?
-
-The submission is made by adding everything including the model to git,
-tagging the submission with a git tag that starts with `submission-`, and 
-pushing to AIcrowd's GitLab. The rest is done for you!
-
-For large model weight files, you'll need to use `git-lfs`
-
-More details are available at [docs/submission.md](/docs/submission.md).
-
-### How to use GPU?
-
-To use GPU in your submissions, set the gpu flag in `aicrowd.json`. 
-
+Run:
+```commandline
+cat dataset/images_mean_50k_800.parta* > images_mean_50k_800.tar
+tar -xf images_mean_50k_800.tar
 ```
-    "gpu": true,
+to get prepared dataset.
+
+Folder structure:
+```
+Amazon-review
+- amazon_review_mean_05_full_images.csv
+- amazon_review_mean_06_full_images.csv
+- images_mean_50k
 ```
 
-### Are there any hardware or time constraints?
+### How I created dataset
+In `dataset/dataset_creation_steps` there is 4 scripts which I used to prepare dataset. 
 
-Your submission will need to complete predictions on **all the query images** under **10 minutes**. Make sure you take advantage of all the cores by parallelizing your code if needed. 
+1. Download the data from page. I downloaded these categories
+- AMAZON_FASHION
+- All_Beauty
+- Appliances
+- Clothing_Shoes_and_Jewelry
+- Electronics
+- Home_and_Kitchen
+- Office_Products
+- Sports_and_Outdoors
+- Toys_and_Games
+2. Create a parquet files which will store only product which have reviews with images
+```bash
+python get_pairs.py <downloaded_single_json>
+python get_pairs.py <Office_Products.json>
+```
+3. Extract the features for each image. I model from Phase-2 (more on later). I didn't save images as here I'm processing them 10x than I will need in final step. Script will save snapshot every 1k iterations.
+```bash
+python extract_features.py <parquet_file>
+python extract_features.py Toys_and_Games.parquet
+```
+4. Now extract the images/product which are ok for our case. So calculate cosine similarity between images in same product and take only these one which have score above 0.5/0.6
+```bash
+python analyse_pairs.py <path_to_parquet> "<path_to_foolder_with_embeddings>/*.embeddings"
+python analyse_pairs.py Clothing_Shoes_and_Jewelry/Clothing_Shoes_and_Jewelry_pairs.parquet "Clothing_Shoes_and_Jewelry/Clothing_Shoes_and_Jewelry_pairs.parquet_*.embeddings"
+```
+5. Download the images
+```bash
+python download_images.py  
+```
+6. Merge all departments to single file. It will save the last CSV file which can be used for training
+```bash
+python prepare_training_set.py
+```
 
-The machine where the submission will run will have following specifications:
-* 4 vCPUs
-* 16GB RAM
-* (Optional) 1 NVIDIA T4 GPU with 16 GB VRAM - This needs setting `"gpu": true` in `aicrowd.json`
+These scripts were extracted from Notebooks so they are kind of chaos. If anything does not work, just ping me. 
 
-# 📎 Important links
-- 💪 Challenge Page: https://www.aicrowd.com/challenges/visual-product-recognition-challenge-2023
-- 🗣️ Discussion Forum: https://www.aicrowd.com/challenges/visual-product-recognition-challenge-2023discussion
-- 🏆 Leaderboard: https://www.aicrowd.com/challenges/visual-product-recognition-challenge-2023/leaderboards
 
-**Best of Luck** 🎉 🎉
+
+## Config setup
+In each config there is dataset section:
+```
+dataset:
+    product10k:
+        train_valid_root: '<path_to_Product10K_dir>
+        train_prefix: 'train/'
+        train_list: 'train.csv'
+        val_prefix: 'test/'
+        val_list: 'test_kaggletest.csv'
+
+    dev_set:
+        eval_root: "<path_to_development_test_data>"
+        gallery: 'gallery.csv'
+        queries: 'queries.csv'
+
+    seed: 42
+    num_of_classes: 9700
+    input_size: 224
+    batch_size: 48
+    augmentations: 'default'
+    augmentations_valid: 'default'
+    num_workers: 8
+```
+You need to set `dataset.product10k.train_valid_root` and `dataset.dev_set.eval_root` (also in case of XBM Amazon review dataset need to be setup)
+
+
+# Model Training
+
+Before describing the model training recipes, here are the requirements for training the model. All training were run on GCP.
+
+## Setup
+
+1. Environment
+```commandline
+conda create -n aicrowd python=3.8
+pip install -r requirements.txt
+```
+2. Machine
+The training require GPU with 40GB of memory. I run it on single A100.
+
+## Training
+Model was training in couple of phases, as I was refining the training recipes.
+To speed-up first step, I used lower resolution (224). Later on I was using 256.
+
+Main inspiration:
+- 4th place from Universal Image Embedding competition [code](https://github.com/IvanAer/G-Universal-CLIP)
+  - it uses AutoAugument as Data Augmentation technique
+  - warmup + cosine LR Scheduler
+  - ArcMarginProduct_subcenter with adjustable margins per class
+- [XBM](https://github.com/msight-tech/research-xbm)
+  - use contrastive learning loss + memory-bank to make more pair comparisons
+  - this works great if dataset have > ~10k classes. 
+
+Phase 1:
+Train model on Product10k, on 224 resolution. 
+```bash
+python -m visual_search.main_arcface --config config/arcface_1st.yml --name arcface_1st
+```
+
+Phase 2:
+Still only Product10k, on 256 resolution. Before staring training you need to paste path of model from Phase 1 to config/arcface_2nd.yml (line `pretrain_model`). The same thing apply to all next steps
+```bash
+python -m visual_search.main_arcface --config config/arcface_2nd.yml --name arcface_2nd
+```
+
+Phase 3:
+Here I switched from ArcFace to XBM. The main reason is #classes in Amazon-Review dataset (~100k), making it infeasible to store 100k x emb-dim parameters in memory.
+Amazon Dataset was filtered in two ways, using cosine similarity threshold 0.5 and 0.6. Here I'm using 0.6 threshold (dataset path is in the config).
+When I compare ArcFace and XBM on same dataset, ArcFace was slightly better on LB and XBM was better on local validation set.
+```bash
+python -m visual_search.main_arcface --config config/xbm_1st.yml --name xbm_1st
+```
+
+Phase 4:
+XBM but now with dataset with threshold=0.5. It is 2x bigger than 0.6.
+```bash
+python -m visual_search.main_arcface --config config/xbm_2nd.yml --name xbm_2nd
+```
+
+Phase 5:
+Same like in Phase 4, but I just lower down the LR.
+```bash
+python -m visual_search.main_arcface --config config/xbm_3st.yml --name xbm_3st
+```
+
+## Things that I tried and failed for training:
+- using GEM pooling in CLIP models
+- get better LR/WD parameters as based on Google Universal Embedding competition it was crucial for the winners. I just get ~0.3 with better values but also lot of time
+- different types of augmentations (RandAug or standard-one)
+
+
+# Model preparation for submission
+For submission, I was uploading the traced model (`torch.jit.trace`) as in the begging of the competition it was a convenient way to do so. However then I discovered that `trace-model` take a lot of time to warm-up. 
+Finally, I'm uploading traced model but then I read it and use just its weights with normal torch model.
+
+```bash
+python my_submission/to_torchscript.py <path_from_phase_5>
+```
+Then the output path need to be placed in `my_submission/mcs_baseline_ranker.py` line 53.
+And then everything should work. 
+
+## Some notes on optimization part
+My aim was running model on 272 resolution. To achieve that I switched from autocast to pure fp16 precision.
+Also I run CNN with Channel-Last option which give ~15% speed-boost.
+Secondary, in the post-processing part I switched from full-sort to partial-sort (I needed just first 1k elements).
+
+
+
+
+
