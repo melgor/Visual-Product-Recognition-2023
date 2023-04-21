@@ -1,0 +1,8 @@
+{
+    "challenge_id": "visual-product-recognition-challenge-2023",
+    "authors": [
+      "aicrowd-bot"
+    ],
+    "gpu": true,
+    "description": "(optional) description about your awesome model"
+}

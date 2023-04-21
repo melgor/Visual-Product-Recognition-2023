@@ -1,0 +1,20 @@
+--extra-index-url https://download.pytorch.org/whl/nightly/cu117
+numpy
+pandas
+opencv-python
+--pre
+torch==2.0.0.dev20230125+cu117
+torchvision
+tqdm
+PyYAML
+scikit-learn
+scipy
+loguru
+pytorch_lightning
+neptune-client
+timm
+tensorboard
+mosaicml
+open_clip_torch
+transformers
+albumentations

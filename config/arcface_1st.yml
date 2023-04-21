@@ -1,0 +1,61 @@
+exp_name: 'check_sop'
+outdir: './experiments/'
+
+num_gpu: 1
+channel_last: True
+precision: bf16
+neptune_logger: True
+default_root_dir: "gs://vs-aicrowd/"
+
+dataset:
+    product10k:
+        train_valid_root: '/home/bartosz.ludwiczuk/Product10K/'
+        train_prefix: 'train/'
+        train_list: 'train.csv'
+        val_prefix: 'test/'
+        val_list: 'test_kaggletest.csv'
+
+    dev_set:
+        eval_root: "/home/bartosz.ludwiczuk/development_test_data"
+        gallery: 'gallery.csv'
+        queries: 'queries.csv'
+
+    seed: 42
+    num_of_classes: 9700
+    input_size: 224
+    batch_size: 48
+    augmentations: 'default'
+    augmentations_valid: 'default'
+    num_workers: 8
+
+train:
+    arch: 'convnext_xxlarge'
+    pretrain_name: "laion2b_s34b_b82k_augreg_soup"
+    embedding_dim: 1024
+    optimizer: 'Adam'
+    momentum: 0.9
+    learning_rate_head: 0.0003
+    weight_decay_head: 0.1
+    learning_rates_backbone:
+        e1: 0.00000125
+        e2: 0.0000025
+        e3: 0.000005
+        e4: 0.00001
+    weight_decay_backbone:
+        e1: 0.001
+        e2: 0.001
+        e3: 0.001
+        e4: 0.001
+    warmup_steps: 4500
+    n_epoch: 3
+    eps: 0.01
+    m: 0.45
+    m_min: 0.05
+    s: 30
+    freeze_backbone: False
+    freeze_head: False
+    pretrain_model: ""
+
+
+# Run on Neptune.ai
+# https://app.neptune.ai/melgor89/aicrowd-vs/runs/details?viewId=9844f765-7210-40c9-a069-393c5ad9348e&detailsTab=charts&shortId=AIC-387&type=run
