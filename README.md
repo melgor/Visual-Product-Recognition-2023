@@ -153,12 +153,14 @@ Train model on Product10k, on 224 resolution.
 ```bash
 python -m visual_search.main_arcface --config config/arcface_1st.yml --name arcface_1st
 ```
+[Neptiune link](https://app.neptune.ai/melgor89/aicrowd-vs/runs/details?viewId=9844f765-7210-40c9-a069-393c5ad9348e&detailsTab=charts&shortId=AIC-387&type=run)
 
 Phase 2:
 Still only Product10k, on 256 resolution. Before staring training you need to paste path of model from Phase 1 to config/arcface_2nd.yml (line `pretrain_model`). The same thing apply to all next steps
 ```bash
 python -m visual_search.main_arcface --config config/arcface_2nd.yml --name arcface_2nd
 ```
+[Neptiune link](https://app.neptune.ai/melgor89/aicrowd-vs/runs/details?viewId=9844f765-7210-40c9-a069-393c5ad9348e&detailsTab=metadata&shortId=AIC-398&type=run)
 
 Phase 3:
 Here I switched from ArcFace to XBM. The main reason is #classes in Amazon-Review dataset (~100k), making it infeasible to store 100k x emb-dim parameters in memory.
@@ -167,18 +169,22 @@ When I compare ArcFace and XBM on same dataset, ArcFace was slightly better on L
 ```bash
 python -m visual_search.main_arcface --config config/xbm_1st.yml --name xbm_1st
 ```
+[Neptiune link](https://app.neptune.ai/melgor89/aicrowd-vs/runs/details?viewId=9844f765-7210-40c9-a069-393c5ad9348e&detailsTab=metadata&shortId=AIC-422&type=run)
 
 Phase 4:
 XBM but now with dataset with threshold=0.5. It is 2x bigger than 0.6.
 ```bash
 python -m visual_search.main_arcface --config config/xbm_2nd.yml --name xbm_2nd
 ```
+[Neptiune link](https://app.neptune.ai/melgor89/aicrowd-vs/runs/details?viewId=9844f765-7210-40c9-a069-393c5ad9348e&detailsTab=metadata&shortId=AIC-444&type=run&path=&attribute=config)
 
 Phase 5:
 Same like in Phase 4, but I just lower down the LR.
 ```bash
 python -m visual_search.main_arcface --config config/xbm_3st.yml --name xbm_3st
 ```
+[Neptiune link](https://app.neptune.ai/melgor89/aicrowd-vs/runs/details?viewId=9844f765-7210-40c9-a069-393c5ad9348e&detailsTab=metadata&shortId=AIC-445&type=run&path=&attribute=config)
+
 
 ## Things that I tried and failed for training:
 - using GEM pooling in CLIP models
