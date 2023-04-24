@@ -26,7 +26,7 @@ development_test_data
 ```
 
 ## Amazon Review
-Note: to get requested files, you need to use (gitlab repo)[https://gitlab.aicrowd.com/bartosz_ludwiczuk/visual-product-recognition-2023-starter-kit/-/tree/master] with Git LFS installed. The whole repo require > 20 GB. 
+Note: to get requested files, you need to use [gitlab repo](https://gitlab.aicrowd.com/bartosz_ludwiczuk/visual-product-recognition-2023-starter-kit/-/tree/master) with Git LFS installed. The whole repo require > 20 GB. 
 
 I decided to use this [dataset](https://cseweb.ucsd.edu/~jmcauley/datasets/amazon_v2/) as from the review dataset we can get product images and user images. Connecting both of them allow to create pairs.
 The main problem of using such dataset is that not all images from user are correct one (in sense of Visual-Search system). Like they present the detail of product (like 5x zoom) or product was damage.
